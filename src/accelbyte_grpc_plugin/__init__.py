@@ -23,7 +23,7 @@ from opentelemetry.sdk.metrics.export import MetricReader
 from opentelemetry.sdk.resources import Resource, SERVICE_NAME as RESOURCE_SERVICE_NAME
 from opentelemetry.sdk.trace import TracerProvider
 
-DEFAULT_LOGGER_NAME: str = "app"
+DEFAULT_LOGGER_NAME: str = "extend-app-event-handler"
 DEFAULT_LOGGER_LEVEL: Union[int, str] = logging.DEBUG
 
 
@@ -45,7 +45,8 @@ class App:
         self.env = env
         self.logger = logger
 
-        self.service_name = self.env("SERVICE_NAME", self.env("OTEL_SERVICE_NAME", "app"))
+        v = self.env.str("SERVICE_NAME", self.env.str("OTEL_SERVICE_NAME", None))
+        self.service_name = f"extend-app-eh-{v.strip().lower()}" if v else "extend-app-event-handler"
         self.grpc_interceptors: List[ServerInterceptor] = [aio_server_interceptor()]
         self.grpc_service_names: List[str] = []
         self.otel_metric_readers: List[MetricReader] = []

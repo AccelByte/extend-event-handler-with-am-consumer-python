@@ -15,7 +15,6 @@ services:
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://host.docker.internal:9411/api/v2/spans
       - OTEL_TRACES_EXPORTER=zipkin
       - OTEL_METRICS_EXPORTER=none
-      - OTEL_SERVICE_NAME=ExtendEventHandlerServerPython
       - GRPC_VERBOSITY=debug
     extra_hosts:
       - host.docker.internal:host-gateway
