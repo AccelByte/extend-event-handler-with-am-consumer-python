@@ -4,7 +4,6 @@
 
 import asyncio
 import logging
-import sys
 from logging import Logger
 from typing import List
 
@@ -27,12 +26,10 @@ from accelbyte_grpc_plugin import (
 )
 from accelbyte_grpc_plugin.utils import instrument_sdk_http_client
 
-from account_pb2_grpc import (
-    add_UserAuthenticationUserLoggedInServiceServicer_to_server,
-    add_UserAuthenticationUserThirdPartyLoggedInServiceServicer_to_server,
+from async_messaging.consumer_service_pb2_grpc import (
+    add_AsyncMessagingConsumerServiceServicer_to_server,
 )
-from .services.login_handler import AsyncLoginHandlerService
-from .services.third_party_login_handler import AsyncThirdPartyLoginHandlerService
+from .services.async_messaging_handler import AsyncMessagingHandlerService
 from .utils import create_env
 
 DEFAULT_APP_PORT: int = 6565
@@ -83,34 +80,19 @@ async def main(**kwargs) -> None:
     with env.prefixed("AB_"):
         namespace = env.str("NAMESPACE", DEFAULT_AB_NAMESPACE)
 
-    item_id_to_grant = env.str("ITEM_ID_TO_GRANT", None)
-    if not item_id_to_grant:
-        logger.error("ITEM_ID_TO_GRANT environment variable is required")
-        sys.exit(1)
+    store_enabled = env.bool("STORE_MESSAGE_IN_CLOUDSAVE", False)
 
     opts = create_options(sdk=sdk, env=env, logger=logger)
     opts.append(
         AppGRPCServiceOpt(
-            AsyncLoginHandlerService(
+            AsyncMessagingHandlerService(
                 namespace=namespace,
-                item_id_to_grant=item_id_to_grant,
+                store_enabled=store_enabled,
                 sdk=sdk,
                 logger=logger,
             ),
-            AsyncLoginHandlerService.full_name,
-            add_UserAuthenticationUserLoggedInServiceServicer_to_server,
-        )
-    )
-    opts.append(
-        AppGRPCServiceOpt(
-            AsyncThirdPartyLoginHandlerService(
-                namespace=namespace,
-                item_id_to_grant=item_id_to_grant,
-                sdk=sdk,
-                logger=logger,
-            ),
-            AsyncThirdPartyLoginHandlerService.full_name,
-            add_UserAuthenticationUserThirdPartyLoggedInServiceServicer_to_server,
+            AsyncMessagingHandlerService.full_name,
+            add_AsyncMessagingConsumerServiceServicer_to_server,
         )
     )
 
