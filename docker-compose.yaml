@@ -10,7 +10,7 @@ services:
       - AB_CLIENT_ID=${AB_CLIENT_ID?}
       - AB_CLIENT_SECRET=${AB_CLIENT_SECRET?}
       - AB_NAMESPACE=${AB_NAMESPACE?}
-      - ITEM_ID_TO_GRANT=${ITEM_ID_TO_GRANT?}
+      - STORE_MESSAGE_IN_CLOUDSAVE=${STORE_MESSAGE_IN_CLOUDSAVE:-false}
       - LOKI_URL=http://host.docker.internal:3100/loki/api/v1/push
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://host.docker.internal:9411/api/v2/spans
       - OTEL_TRACES_EXPORTER=zipkin
