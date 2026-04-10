@@ -8,7 +8,7 @@ PROTOC_IMAGE := proto-builder
 
 IS_INSIDE_DEVCONTAINER := $(REMOTE_CONTAINERS)
 
-.PHONY: build proto_image proto
+.PHONY: build proto_image proto test
 
 proto_image:
 ifneq ($(IS_INSIDE_DEVCONTAINER),true)
@@ -26,5 +26,8 @@ ifneq ($(IS_INSIDE_DEVCONTAINER),true)
 else
 	./proto.sh
 endif
+
+test:
+	pytest
 
 build: proto
